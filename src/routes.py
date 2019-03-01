@@ -7,9 +7,6 @@ import json
 import os
 
 
-
-
-
 # the @app is imported via from . import app
 @app.route('/') # default value is ['GET']
 def home():
@@ -34,12 +31,11 @@ def search_results():
     symbol = request.form.get('symbol')
 
     # url = 'https://api.iextrading.com/1.0/stock/aapl/company'
-    url = f'https://api.iextrading.com/1.0/stock/{symbol}/company'
+    url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
 
     response = requests.get(url)
 
     # instatiate a company
-
     data = json.loads(response.text)
     company = Company(name=data['companyName'], symbol=data['symbol'])
     # 'companyName' needs to match the database column for company
