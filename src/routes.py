@@ -12,12 +12,7 @@ import os
 def home():
     """
     """
-    return render_template('home.html')
-    # return render_template('home.html')
-
-# @app.route('/search')
-# def home():
-#     return 'home'
+    return render_template('stocks/home.html')
 
 @app.route('/search', methods=['GET'])
 def search_form():
@@ -28,33 +23,48 @@ def search_results():
     # hit api with given stock symbol
     # store results in db - need to use a model
     # redirect to portfolio page
+
+    # import pdb; pdb.set_trace()
+
     symbol = request.form.get('symbol')
 
-    # url = 'https://api.iextrading.com/1.0/stock/aapl/company'
     url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
 
     response = requests.get(url)
+    data = json.loads(response.text)
 
     # instatiate a company
-    data = json.loads(response.text)
     company = Company(name=data['companyName'], symbol=data['symbol'])
+    print(company)
+    print(company.name, company.symbol)
+
     # 'companyName' needs to match the database column for company
 
-    db.session.add(company)
-    db.session.commit()
+    # peter = User.query.filter_by(username='peter').first()
 
-    # how to we check that what was committed is actually committed?
+    # result = Company.query.filter_by(symbol='symbol').first()
+    # import pdb; pdb.set_trace()
 
-    # return company.name + ' ' + company.symbol
-    return redirect(url_for('.portfolio')) # redirect the portfolio page
+    try:
+      db.session.add(company)
+      db.session.commit()
+    except (DBAPIError, IntegrityError):
+      abort(400)
+         
+    # if result:
+      # print(Company.query.filter_by(symbol='symbol').first())
+    # else:
+      # import pdb; pdb.set_trace()
 
+    # how do we check that what was committed is actually committed?
     # return response.text
     # return data['symbol']
+
+    return redirect(url_for('.portfolio')) # redirect the portfolio page
 
 @app.route('/portfolio')
 def portfolio():
   # print(Company.query.all())
-
   # return str(Company.query.all())
 
   return render_template('stocks/stocks.html')
