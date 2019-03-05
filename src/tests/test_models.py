@@ -1,6 +1,6 @@
 from src.models import Company
 
-class testClass():
+class TestClass():
     @classmethod
     def setup_class(cls):
         pass
@@ -16,7 +16,7 @@ class testClass():
         pass
 
     def test_create_company(self, session):
-        company = Company(name='Blackrock', symbol='BLK')
+        company = Company(name='Badger Meter', symbol='BMI')
         session.add(company)
         session.commit()
 
@@ -25,9 +25,10 @@ class testClass():
         companies = company.query.all()
 
         assert len(companies) == 1
+        assert companies[0] == 'Badger Meter'
 
     def test_create_company_again(self, session):
-        company = Company(name='Blackrock', symbol='BLK')
+        company = Company(name='Badger Meter', symbol='BMI')
         session.add(company)
         session.commit()
 
@@ -36,6 +37,9 @@ class testClass():
         companies = company.query.all()
 
         assert len(companies) == 1
+
+    def test_tc2(self):
+        pass
 
 
 

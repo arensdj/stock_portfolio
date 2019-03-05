@@ -1,4 +1,5 @@
 from src.models import db as _db
+
 from src import app as _app
 import pytest
 import os
@@ -7,6 +8,7 @@ import os
 def app(request):
     """
     Function Testable Flask Application
+    Instantiates an app, sets up the app, then tears it down.
     """
     _app.config.from_mapping(
         TESTING=True,
@@ -15,7 +17,62 @@ def app(request):
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
 
-    ctx=
+    ctx = _app.app_context()
+    ctx.push()
+
+    def teardown():
+        ctx.pop()
+
+    request.addfinalizer(teardown)
+    return _app
+
+@pytest.fixture()
+def db(app, request):
+    """
+    Function Test Database
+    """
+    def teardown():
+        # drop all database tables
+        _db.drop_all()
+
+        # sets the database app to input value app
+        _db.app = app
+        _db.create_all()
+
+        request.addfinalizer(teardown)
+        
+        # returns the database
+        return _db
+
+@pytest.fixture()
+def session(db, request):
+    """
+    Create a new database session for testing purposes
+    """
+    # import pdb; pdb.set_trace()
+    connection = _db.engine.connect()
+    transaction = connection.begin()
+
+    options = dict(bind=connection, binds={})
+    session = _db.create_scoped_session(options=option)
+
+    _db.session = session
+
+    def teardown():
+        # at the end of the current test function, undo all of the changes
+        transaction.rollback()
+        connection.close()
+        session.remove()
+
+        request.addfinalizer(teardown)
+        return session
+
+
+
+
+
+
+
 
 
 
