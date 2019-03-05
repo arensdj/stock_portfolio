@@ -1,5 +1,5 @@
 from src import app
-import pytest
+# import pytest
 
 # A test can be a function
 # def test_functions():

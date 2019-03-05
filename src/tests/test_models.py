@@ -15,7 +15,7 @@ from src.models import Company
 #     def teardown_method(self, method):
 #         pass
 
-def test_create_company(self, session):
+def test_create_company(session):
     company = Company(name='General Electric Company', symbol='ge')
     session.add(company)
     session.commit()

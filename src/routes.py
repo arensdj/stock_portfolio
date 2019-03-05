@@ -13,11 +13,11 @@ import os
 def home():
     return render_template('stocks/home.html')
 
-# @app.route('/search', methods=['GET'])
-# def search_form():
-#     return render_template('stocks/search.html')
+@app.route('/search', methods=['GET'])
+def search_form():
+    return render_template('stocks/search.html')
 
-@app.route('/search', methods=[POST'])
+@app.route('/search', methods=['POST'])
 def search_results():
     # hit api with given stock symbol
     # store results in db - need to use a model
@@ -42,7 +42,8 @@ def search_results():
         db.session.commit()
 
         return redirect(url_for('.portfolio')) # redirect the portfolio page
-    except JSONDecodeError:
+    # except JSONDecodeError:
+    except (DBAPIError, IntegrityError):
         abort(404)
 
     # except (DBAPIError, IntegrityError):
