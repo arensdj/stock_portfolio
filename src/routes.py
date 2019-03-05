@@ -11,11 +11,11 @@ import os
 # the @app is imported via 'from . import app'
 @app.route('/') # default value is ['GET']
 def home():
-    return render_template('stocks/home.html')
+    return render_template('home.html')
 
 @app.route('/search', methods=['GET'])
 def search_form():
-    return render_template('stocks/search.html')
+    return render_template('search.html')
 
 @app.route('/search', methods=['POST'])
 def search_results():
@@ -53,8 +53,8 @@ def search_results():
     # return response.text
     # return data['symbol']
 
-    return render_template('stocks/search.html')
+    return render_template('search.html')
 
 @app.route('/portfolio', methods=['GET'])
 def portfolio():
-  return render_template('stocks/portfolio.html')
+  return render_template('portfolio.html')
