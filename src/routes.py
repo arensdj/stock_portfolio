@@ -28,7 +28,7 @@ def search_results():
     symbol = request.form.get('symbol')
 
     url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
-
+    print('URL is: ' + url)
     response = requests.get(url)
     data = json.loads(response.text)    
 
@@ -40,21 +40,12 @@ def search_results():
         company = Company(name=data['companyName'], symbol=data['symbol'])
         db.session.add(company)
         db.session.commit()
-
-        return redirect(url_for('.portfolio')) # redirect the portfolio page
-    # except JSONDecodeError:
     except (DBAPIError, IntegrityError):
-        abort(404)
+        abort(400)
+        
+    return redirect(url_for('.portfolio')) # redirect the portfolio page
 
-    # except (DBAPIError, IntegrityError):
-      # abort(400)
-         
-    # how do we check that what was committed is actually committed?
-    # return response.text
-    # return data['symbol']
-
-    return render_template('search.html')
-
-@app.route('/portfolio', methods=['GET'])
+@app.route('/portfolio')
+# @app.route('/portfolio', methods=['GET'])
 def portfolio():
   return render_template('portfolio.html')
