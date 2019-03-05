@@ -40,7 +40,7 @@ def search_results():
         company = Company(name=data['companyName'], symbol=data['symbol'])
         db.session.add(company)
         db.session.commit()
-    except (DBAPIError, IntegrityError):
+    except (DBAPIError, IntegrityError, JSONDecodeError):
         abort(400)
         
     return redirect(url_for('.portfolio')) # redirect the portfolio page
