@@ -16,7 +16,7 @@ from src.models import Company
 #         pass
 
 def test_create_company(session):
-    company = Company(name='General Electric Company', symbol='ge')
+    company = Company(name='ADT Inc', symbol='adt')
     session.add(company)
     session.commit()
 
@@ -25,7 +25,7 @@ def test_create_company(session):
     companies = company.query.all()
 
     assert len(companies) == 1
-    assert companies[0] == 'General Electric Company'
+    assert companies[0] == 'ADT Inc'
 
 # def test_create_company_again(self, session):
 #     company = Company(name='General Electric Company', symbol='ge')

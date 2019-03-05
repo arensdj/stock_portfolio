@@ -1,32 +1,4 @@
 from src import app
-# import pytest
-
-# A test can be a function
-# def test_functions():
-#     assert True
-
-# A test can also be a class
-# class TestClass:
-#     @classmethod
-#     def setup_class(cls):
-#         # pass
-#         print('In setup_class')
-
-#     @classmethod
-#     def teardown_class(cls):
-#         pass
-
-#     def setup_method(self, method):
-#         pass
-
-#     def teardown_method(self, method):
-#         pass
-
-#     def test_tc1(self):
-#         pass
-
-#     def test_tc2(self):
-#         pass
 
 def test_home_route():
     """
