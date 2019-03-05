@@ -14,7 +14,7 @@ class Company(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256), index=True, unique=True)
-    symbol = db.Column(db.String(256), index=True, unique=True)
+    symbol = db.Column(db.String(16), index=True, unique=True)
 
     # date_created = db.Column(db.DateTime, default=dt.now())
 

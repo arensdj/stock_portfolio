@@ -1,5 +1,4 @@
 from src.models import db as _db
-
 from src import app as _app
 import pytest
 import os
@@ -50,13 +49,11 @@ def session(db, request):
     Create a new database session for testing purposes
     """
     # import pdb; pdb.set_trace()
-    connection = _db.engine.connect()
+    connection = db.engine.connect()
     transaction = connection.begin()
-
     options = dict(bind=connection, binds={})
-    session = _db.create_scoped_session(options=option)
-
-    _db.session = session
+    session = db.create_scoped_session(options=option)
+    db.session = session
 
     def teardown():
         # at the end of the current test function, undo all of the changes
@@ -64,8 +61,8 @@ def session(db, request):
         connection.close()
         session.remove()
 
-        request.addfinalizer(teardown)
-        return session
+    request.addfinalizer(teardown)
+    return session
 
 
 
