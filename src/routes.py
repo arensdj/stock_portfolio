@@ -15,11 +15,11 @@ def home():
     """
     return render_template('stocks/home.html')
 
-@app.route('/search', methods=['GET'])
-def search_form():
-    return render_template('stocks/search.html')
+# @app.route('/search', methods=['GET'])
+# def search_form():
+#     return render_template('stocks/search.html')
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET', 'POST'])
 def search_results():
     # hit api with given stock symbol
     # store results in db - need to use a model
@@ -27,27 +27,28 @@ def search_results():
 
     # import pdb; pdb.set_trace()
 
-    symbol = request.form.get('symbol')
+    if request.method == 'POST':
+        symbol = request.form.get('symbol')
 
-    url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
+        url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
 
-    response = requests.get(url)
-    data = json.loads(response.text)
+        response = requests.get(url)
+        data = json.loads(response.text)
 
-    # instatiate a company
-    company = Company(name=data['companyName'], symbol=data['symbol'])
+        # instatiate a company
+        company = Company(name=data['companyName'], symbol=data['symbol'])
 
-    # 'companyName' needs to match the database column for company
-    # peter = User.query.filter_by(username='peter').first()
-    # result = Company.query.filter_by(symbol='symbol').first()
+        # 'companyName' needs to match the database column for company
+        # peter = User.query.filter_by(username='peter').first()
+        # result = Company.query.filter_by(symbol='symbol').first()
 
-    try:
-        db.session.add(company)
-        db.session.commit()
+        try:
+            db.session.add(company)
+            db.session.commit()
 
-        return redirect(url_for('.portfolio')) # redirect the portfolio page
-    except JSONDecodeError:
-        abort(404)
+            return redirect(url_for('.portfolio')) # redirect the portfolio page
+        except JSONDecodeError:
+            abort(404)
 
     # except (DBAPIError, IntegrityError):
       # abort(400)
