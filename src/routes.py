@@ -11,15 +11,13 @@ import os
 # the @app is imported via 'from . import app'
 @app.route('/') # default value is ['GET']
 def home():
-    """
-    """
     return render_template('stocks/home.html')
 
 # @app.route('/search', methods=['GET'])
 # def search_form():
 #     return render_template('stocks/search.html')
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=[POST'])
 def search_results():
     # hit api with given stock symbol
     # store results in db - need to use a model
@@ -27,28 +25,25 @@ def search_results():
 
     # import pdb; pdb.set_trace()
 
-    if request.method == 'POST':
-        symbol = request.form.get('symbol')
+    symbol = request.form.get('symbol')
 
-        url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
+    url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
 
-        response = requests.get(url)
-        data = json.loads(response.text)
+    response = requests.get(url)
+    data = json.loads(response.text)    
 
-        # instatiate a company
+    # 'companyName' needs to match the database column for company
+    # peter = User.query.filter_by(username='peter').first()
+    # result = Company.query.filter_by(symbol='symbol').first()
+
+    try:
         company = Company(name=data['companyName'], symbol=data['symbol'])
+        db.session.add(company)
+        db.session.commit()
 
-        # 'companyName' needs to match the database column for company
-        # peter = User.query.filter_by(username='peter').first()
-        # result = Company.query.filter_by(symbol='symbol').first()
-
-        try:
-            db.session.add(company)
-            db.session.commit()
-
-            return redirect(url_for('.portfolio')) # redirect the portfolio page
-        except JSONDecodeError:
-            abort(404)
+        return redirect(url_for('.portfolio')) # redirect the portfolio page
+    except JSONDecodeError:
+        abort(404)
 
     # except (DBAPIError, IntegrityError):
       # abort(400)
@@ -59,9 +54,6 @@ def search_results():
 
     return render_template('stocks/search.html')
 
-@app.route('/portfolio')
+@app.route('/portfolio', methods=['GET'])
 def portfolio():
-  # print(Company.query.all())
-  # return str(Company.query.all())
-
   return render_template('stocks/portfolio.html')
