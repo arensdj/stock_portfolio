@@ -1,5 +1,4 @@
 from src.models import db as _db
-
 from src import app as _app
 import pytest
 import os
@@ -45,7 +44,7 @@ def db(app, request):
         return _db
 
 @pytest.fixture()
-def session(db, request):
+def session(_db, request):
     """
     Create a new database session for testing purposes
     """

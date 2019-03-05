@@ -5,7 +5,7 @@ def test_functions():
     assert True
 
 # A test can also be a class
-class testClass:
+class TestClass:
     @classmethod
     def setup_class(cls):
         # pass
@@ -33,20 +33,21 @@ class testClass:
         """
         rv = app.test_client().get('/')
         assert rv.status_code == 200
-        assert b'<title>Home</title>' in rv.data
+        assert b'<title>Flask Demo</title>' in rv.data
 
     def test_search_route_post_status(self, session):
         """
         Tests that /search post route gives correct status
         """
-        rv = app.test_client().post('/search', data={'symbol': 'BLK'})
+        rv = app.test_client().post('/search', data={'symbol': 'ge'})
+
         assert rv.status_code == 302
 
     def test_search_route_post_status_again(self, session):
         """
         Tests that /search post route gives correct status
         """
-        rv = app.test_client().post('/search', data={'symbol': 'BLK'}, follow_redirects=True)
+        rv = app.test_client().post('/search', data={'symbol': 'ge'}, follow_redirects=True)
         assert rv.status_code == 200
 
     

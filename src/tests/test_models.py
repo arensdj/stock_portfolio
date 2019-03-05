@@ -16,7 +16,7 @@ class TestClass():
         pass
 
     def test_create_company(self, session):
-        company = Company(name='Badger Meter', symbol='BMI')
+        company = Company(name='General Electric Company', symbol='ge')
         session.add(company)
         session.commit()
 
@@ -25,10 +25,10 @@ class TestClass():
         companies = company.query.all()
 
         assert len(companies) == 1
-        assert companies[0] == 'Badger Meter'
+        assert companies[0] == 'General Electric Company'
 
     def test_create_company_again(self, session):
-        company = Company(name='Badger Meter', symbol='BMI')
+        company = Company(name='General Electric Company', symbol='ge')
         session.add(company)
         session.commit()
 
