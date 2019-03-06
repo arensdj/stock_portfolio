@@ -26,7 +26,7 @@ def company_search():
             response = requests.get(url)
             data = json.loads(response.text)    
             session['context'] = data
-            # db.session['symbol'] = symbol
+            #session['symbol'] = symbol
 
             # return redirect(url_for('.portfolio'))
             return redirect(url_for('.preview_company'))
@@ -47,7 +47,7 @@ def preview_company():
 
     if form.validate_on_submit():
         try:
-            company = Company(name=form.data['companyName'], symbol=form.data['symbol'])
+            company = Company(name=form.data['name'], symbol=form.data['symbol'])
             db.session.add(company)
             db.session.commit()
         except IntegrityError:
@@ -73,7 +73,3 @@ def preview_company():
 def portfolio():
     companies = Company.query.all()
     return render_template('company.html', companies=companies)
-
-#   'company.html',
-#         form=form,
-#         **form_context
