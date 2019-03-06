@@ -26,9 +26,7 @@ def company_search():
             response = requests.get(url)
             data = json.loads(response.text)    
             session['context'] = data
-            #session['symbol'] = symbol
 
-            # return redirect(url_for('.portfolio'))
             return redirect(url_for('.preview_company'))
         except:
             flash('Something went wrong with your search.  Try again.')
