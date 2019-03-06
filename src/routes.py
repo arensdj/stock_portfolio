@@ -1,4 +1,4 @@
-from flask import render_template, abort, redirect, url_for, flash, request
+from flask import render_template, abort, redirect, url_for, flash, request, session
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from .forms import CompanyForm, CompanyAddForm
 from .models import Company, db
@@ -21,12 +21,11 @@ def company_search():
     if form.validate_on_submit():
         try:
             symbol = form.data['symbol']        
-
             url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
-
+            # import pdb; pdb.set_trace()
             response = requests.get(url)
             data = json.loads(response.text)    
-            db.session['context'] = data
+            session['context'] = data
             # db.session['symbol'] = symbol
 
             # return redirect(url_for('.portfolio'))
@@ -41,8 +40,8 @@ def preview_company():
     """
     """
     form_context = {
-        'name': session['context']['name'],
-        'symbol' : session['symbol'],
+        'name': session['context']['companyName'],
+        'symbol' : session['context']['symbol']
     }
     form = CompanyAddForm(**form_context)
 
@@ -51,10 +50,15 @@ def preview_company():
             company = Company(name=form.data['companyName'], symbol=form.data['symbol'])
             db.session.add(company)
             db.session.commit()
-        except (DBAPIError, IntegrityError, JSONDecodeError):
+        except IntegrityError:
+            flash(form.data['name'] + ' This company exists in the Portfolio.')
+            return redirect(url_for('.preview_company'))
+        except DBAPIError as e:
             flash('Something went wrong with your search.')
-            # return render_template(url_for('.preview_company'))
-            return render_template(url_for('.preview_company'))
+            return redirect(url_for('.preview_company'))
+        # except (DBAPIError, IntegrityError, JSONDecodeError):
+        #     flash('Something went wrong with your search.')
+        #     return render_template(url_for('.preview_company'))
 
         return redirect(url_for('.portfolio'))
 
@@ -62,10 +66,14 @@ def preview_company():
         'preview.html',
         form=form,
         symbol=form_context['symbol'],
-        name=session['context'],
+        name=session['context']['companyName'],
     )
 
 @app.route('/portfolio', methods=['GET'])
 def portfolio():
     companies = Company.query.all()
     return render_template('company.html', companies=companies)
+
+#   'company.html',
+#         form=form,
+#         **form_context
