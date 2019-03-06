@@ -1,5 +1,6 @@
-from flask import render_template, abort, redirect, url_for, request
+from flask import render_template, abort, redirect, url_for, flash, request, session
 from sqlalchemy.exc import DBAPIError, IntegrityError
+from .forms import CompanyForm, CompanyAddForm
 from .models import Company, db
 from . import app  # same as from src import app
 from json import JSONDecodeError
@@ -13,39 +14,60 @@ import os
 def home():
     return render_template('home.html')
 
-@app.route('/search', methods=['GET'])
-def search_form():
-    return render_template('search.html')
+@app.route('/search', methods=['GET', 'POST'])
+def company_search():
+    form = CompanyForm()
 
-@app.route('/search', methods=['POST'])
-def search_results():
-    # hit api with given stock symbol
-    # store results in db - need to use a model
-    # redirect to portfolio page
+    if form.validate_on_submit():
+        try:
+            symbol = form.data['symbol']        
+            url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
+            # import pdb; pdb.set_trace()
+            response = requests.get(url)
+            data = json.loads(response.text)    
+            session['context'] = data
 
-    # import pdb; pdb.set_trace()
+            return redirect(url_for('.preview_company'))
+        except:
+            flash('Something went wrong with your search.  Try again.')
 
-    symbol = request.form.get('symbol')
+    return render_template('search.html', form=form)
 
-    url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
-    print('URL is: ' + url)
-    response = requests.get(url)
-    data = json.loads(response.text)    
+@app.route('/preview', methods=['GET', 'POST'])
+def preview_company():
+    """
+    """
+    form_context = {
+        'name': session['context']['companyName'],
+        'symbol' : session['context']['symbol']
+    }
+    form = CompanyAddForm(**form_context)
 
-    # 'companyName' needs to match the database column for company
-    # peter = User.query.filter_by(username='peter').first()
-    # result = Company.query.filter_by(symbol='symbol').first()
+    if form.validate_on_submit():
+        try:
+            company = Company(name=form.data['name'], symbol=form.data['symbol'])
+            db.session.add(company)
+            db.session.commit()
+        except IntegrityError:
+            flash(form.data['name'] + ' This company exists in the Portfolio.')
+            return redirect(url_for('.preview_company'))
+        except DBAPIError as e:
+            flash('Something went wrong with your search.')
+            return redirect(url_for('.preview_company'))
+        # except (DBAPIError, IntegrityError, JSONDecodeError):
+        #     flash('Something went wrong with your search.')
+        #     return render_template(url_for('.preview_company'))
 
-    try:
-        company = Company(name=data['companyName'], symbol=data['symbol'])
-        db.session.add(company)
-        db.session.commit()
-    except (DBAPIError, IntegrityError, JSONDecodeError):
-        abort(400)
-        
-    return redirect(url_for('.portfolio')) # redirect the portfolio page
+        return redirect(url_for('.portfolio'))
 
-@app.route('/portfolio')
-# @app.route('/portfolio', methods=['GET'])
+    return render_template(
+        'preview.html',
+        form=form,
+        symbol=form_context['symbol'],
+        name=session['context']['companyName'],
+    )
+
+@app.route('/portfolio', methods=['GET'])
 def portfolio():
-  return render_template('portfolio.html')
+    companies = Company.query.all()
+    return render_template('company.html', companies=companies)

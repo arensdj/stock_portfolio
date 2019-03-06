@@ -6,7 +6,7 @@ def test_home_route():
     """
     rv = app.test_client().get('/')
     assert rv.status_code == 200
-    assert b'<h1>Welcome to your future!</h1>' in rv.data
+    assert b'<h1>Welcome to the site</h1>' in rv.data
 
 def test_search_route():
     """

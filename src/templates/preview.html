@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-  <p>Company: {{ companies.name }}</p>
+  <p>Company: {{ name }}</p>
   <p>Symbol: {{ symbol }}</p>
 
   <form action="{{ url_for(".preview_company") }}" method="POST">
