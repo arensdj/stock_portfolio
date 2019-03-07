@@ -1,13 +1,18 @@
 from flask import render_template, abort, redirect, url_for, flash, request, session
 from sqlalchemy.exc import DBAPIError, IntegrityError
-from .forms import CompanyForm, CompanyAddForm
-from .models import Company, db
+from .forms import CompanyForm, CompanyAddForm, CategoryCreateForm
+from .models import Company, db, Category
 from . import app  # same as from src import app
 from json import JSONDecodeError
 import requests
 import json
 import os
 
+@app.add_template_global
+def get_categories():
+    """
+    """
+    return Category.query.all()
 
 # the @app is imported via 'from . import app'
 @app.route('/') # default value is ['GET']
@@ -67,7 +72,23 @@ def preview_company():
         name=session['context']['companyName'],
     )
 
-@app.route('/portfolio', methods=['GET'])
+@app.route('/portfolio', methods=['GET', 'POST'])
 def portfolio():
+    """
+    """
+    form = CategoryCreateForm()
+
+    if form.validate_on_submit():
+        try:
+            category = Category(name=form.data['data'])
+            db.session.add(category)
+            db.session.commit()
+        except (DBAPIError, IntegrityError):
+            flash('Something went wrong with Category Form.')
+            return render_template('portfolio.html', form=form)
+
+        # return redirect(url_for('.portfolio'))
+        return redirect(url_for('search.html'))
+
     companies = Company.query.all()
-    return render_template('company.html', companies=companies)
+    return render_template('portfolio.html', companies=companies, form=form)
