@@ -2,17 +2,23 @@
 
 {% block content %}
 <div class="container">
-    <h1>Welcome to the Portfolio</h1>
-    
-    {% for company in companies %}
-    <div class="company">
-      <p>Name: {{ company.name }}</p>
-      <p>Symbol: {{ company.symbol }}</p>
+    <h2>Welcome to the Portfolio</h2>
+    <div>
+        <h3>Create a new Category!</h3>
+        <form action="{{ url_for(".portfolio") }}" method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.name.label }}{{ form.name(size=20) }}
+            <input type="submit" name="create_category" id="create_category" value="Go">
+        </form>
     </div>
-    {% endfor %}
+    <div>
+        {% for company in companies %}
+            <div class="company">
+                <h2>{{ company.category.name }}</h2>
+                <p>Name: {{ company.name }}</p>
+                <p>Symbol: {{ company.symbol }}</p>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock content %}
-
-{% block scripts %}
-
-{% endblock scripts %}
