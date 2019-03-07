@@ -80,7 +80,7 @@ def portfolio():
 
     if form.validate_on_submit():
         try:
-            category = Category(name=form.data['data'])
+            category = Category(name=form.data['name'])
             db.session.add(category)
             db.session.commit()
         except (DBAPIError, IntegrityError):
