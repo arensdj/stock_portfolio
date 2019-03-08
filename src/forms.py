@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField
 from wtforms.validators import DataRequired
-from .models import Category
+from .models import Portfolio
 
 class CompanyForm(FlaskForm):
     """
@@ -14,14 +14,21 @@ class CompanyAddForm(FlaskForm):
     """
     symbol = StringField('symbol', validators=[DataRequired()])
     name = StringField('name', validators=[DataRequired()])
-    categories = SelectField('categories')
+    portfolios = SelectField('portfolios')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.categories.choices = [(str(c.id), c.name) for c in Category.query.all()]
+        self.portfolios.choices = [(str(c.id), c.name) for c in Portfolio.query.all()]
 
 
-class CategoryCreateForm(FlaskForm):
+class PortfolioCreateForm(FlaskForm):
     """
     """
     name = StringField('name', validators=[DataRequired()])
+
+# New for authen
+# class AuthForm(FlaskForm):
+#     """
+#     """
+#     email = StringField('email', validators=[DataRequired()])
+#     password = Password('password', validators=[DataRequired()])

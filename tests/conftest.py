@@ -1,3 +1,4 @@
+from src.models import Company, Portfolio
 from src.models import db as _db
 from src import app as _app
 import pytest
@@ -58,3 +59,25 @@ def session(db, request):
 
     request.addfinalizer(teardown)
     return session
+
+@pytest.fixture()
+def portfolio(session):
+    """
+    """
+    portfolio = Portfolio(name='Default')
+
+    session.add(portfolio)
+    session.commit()
+    return portfolio
+
+
+@pytest.fixture()
+def company(session, portfolio):
+    """
+    """
+    company = Company(name='ADT Inc.', symbol='ADT', portfolio=portfolio)
+
+    session.add(company)
+
+    session.commit()
+    return company

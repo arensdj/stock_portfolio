@@ -1,7 +1,7 @@
 from flask import render_template, abort, redirect, url_for, flash, request, session
 from sqlalchemy.exc import DBAPIError, IntegrityError
-from .forms import CompanyForm, CompanyAddForm, CategoryCreateForm
-from .models import Company, db, Category
+from .forms import CompanyForm, CompanyAddForm, PortfolioCreateForm
+from .models import Company, db, Portfolio
 from . import app  # same as from src import app
 from json import JSONDecodeError
 import requests
@@ -9,10 +9,10 @@ import json
 import os
 
 @app.add_template_global
-def get_categories():
+def get_portfolios():
     """
     """
-    return Category.query.all()
+    return Portfolio.query.all()
 
 # the @app is imported via 'from . import app'
 @app.route('/') # default value is ['GET']
@@ -36,6 +36,8 @@ def company_search():
         except:
             flash('Something went wrong with your search.  Try again.')
 
+        return redirect(url_for('.preview_company'))
+
     return render_template('search.html', form=form)
 
 @app.route('/preview', methods=['GET', 'POST'])
@@ -48,9 +50,13 @@ def preview_company():
     }
     form = CompanyAddForm(**form_context)
 
+    # import pdb; pdb.set_trace()
     if form.validate_on_submit():
         try:
-            company = Company(name=form.data['name'], symbol=form.data['symbol'])
+            company = Company(name=form.data['name'], 
+            symbol=form.data['symbol'],
+            portfolio_id=form.data['portfolios'],
+            )
             db.session.add(company)
             db.session.commit()
         except IntegrityError:
@@ -76,19 +82,21 @@ def preview_company():
 def portfolio():
     """
     """
-    form = CategoryCreateForm()
+    form = PortfolioCreateForm()
 
     if form.validate_on_submit():
         try:
-            category = Category(name=form.data['name'])
-            db.session.add(category)
+            portfolio = Portfolio(name=form.data['name'])
+            db.session.add(portfolio)
             db.session.commit()
         except (DBAPIError, IntegrityError):
-            flash('Something went wrong with Category Form.')
+            flash('Something went wrong with Portfolio Form.')
             return render_template('portfolio.html', form=form)
 
         # return redirect(url_for('.portfolio'))
-        return redirect(url_for('search.html'))
+        # return redirect(url_for('search.html'))
+        return redirect(url_for('.company_search'))
 
     companies = Company.query.all()
     return render_template('portfolio.html', companies=companies, form=form)
+    # return render_template('company.html', companies=companies, form=form)

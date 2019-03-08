@@ -29,7 +29,9 @@ def test_search_route_post_status(session):
     Tests that /search post route gives correct status
     """
     rv = app.test_client().post('/search', data={'symbol': 'GE'})
-    assert rv.status_code == 302
+    assert rv.status_code == 200
+    # assert rv.status_code == 302
+
 
 def test_search_route_post_status_again(session):
     """
