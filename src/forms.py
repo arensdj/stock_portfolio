@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField
+from wtforms import StringField, SelectField, PasswordField
 from wtforms.validators import DataRequired
 from .models import Portfolio
+from flask import g
 
 class CompanyForm(FlaskForm):
     """
@@ -27,8 +28,8 @@ class PortfolioCreateForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
 
 # New for authen
-# class AuthForm(FlaskForm):
-#     """
-#     """
-#     email = StringField('email', validators=[DataRequired()])
-#     password = Password('password', validators=[DataRequired()])
+class AuthForm(FlaskForm):
+    """
+    """
+    email = StringField('email', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])

@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, session, abort, get
+from flask import render_template, flash, redirect, url_for, session, abort, g
 from .models import db, User
 from .forms import AuthForm
 from . import app
@@ -6,6 +6,10 @@ import functools
 
 
 def login_required(view):
+    """
+    View function decorator.  Restricts access to decorated route
+    If user (g.user) not found, display 404 error page.
+    """
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
@@ -28,8 +32,10 @@ def load_logged_in_user():
         g.user = User.query.get(user_id)
 
 
-@app.route(‘/register’, methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    """
     form = AuthForm( )    #<— this instantiates an AuthForm constructor
 
     if form.validate_on_submit():
@@ -60,7 +66,7 @@ def register():
 #   return ‘I am register’
 
 
-@app.route(‘/login’, methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     """
     """
@@ -84,11 +90,20 @@ def login():
 
         flash(error)
 
-    return render_template('aut/login.html', form=form)
+    return render_template('auth/login.html', form=form)
 
         # return render_template( ‘/auth/login.html’, form=form)  
 
         # return ‘I am login’
+
+@app.route('/logout')
+@login_required
+def logout():
+    """
+    """
+    session.clear()
+    flash('Thanks for being awesome!')
+    return redirect(url_for('.login'))
 
 # def login_required(view_function):   # the 'view_function' comes from the routes.py
 

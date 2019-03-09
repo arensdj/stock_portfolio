@@ -17,6 +17,7 @@ pytest = "*"
 requests = "*"
 python-dotenv = "*"
 flask-wtf = "*"
+passlib = "*"
 
 [requires]
 python_version = "3.7"
