@@ -1,7 +1,8 @@
-from flask import render_template, abort, redirect, url_for, flash, request, session
+from flask import render_template, abort, redirect, url_for, flash, request, session, g
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from .forms import CompanyForm, CompanyAddForm, PortfolioCreateForm
 from .models import Company, db, Portfolio
+from .auth import login_required
 from . import app  # same as from src import app
 from json import JSONDecodeError
 import requests
@@ -12,11 +13,15 @@ import os
 def get_portfolios():
     """
     """
-    return Portfolio.query.all()
+    # return Portfolio.query.all()
+    return Portfolio.query.filter_by(user_id=g.user.id).all()
+
 
 # the @app is imported via 'from . import app'
 @app.route('/') # default value is ['GET']
 def home():
+    """
+    """
     return render_template('home.html')
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -41,6 +46,7 @@ def company_search():
     return render_template('search.html', form=form)
 
 @app.route('/preview', methods=['GET', 'POST'])
+@login_required
 def preview_company():
     """
     """
@@ -79,6 +85,7 @@ def preview_company():
     )
 
 @app.route('/portfolio', methods=['GET', 'POST'])
+@login_required
 def portfolio():
     """
     """
@@ -86,7 +93,7 @@ def portfolio():
 
     if form.validate_on_submit():
         try:
-            portfolio = Portfolio(name=form.data['name'])
+            portfolio = Portfolio(name=form.data['name'], user_id=g.user.id)
             db.session.add(portfolio)
             db.session.commit()
         except (DBAPIError, IntegrityError):
@@ -97,6 +104,10 @@ def portfolio():
         # return redirect(url_for('search.html'))
         return redirect(url_for('.company_search'))
 
-    companies = Company.query.all()
+    user_portfolios = Portfolio.query.filter(Portfolio.user_id == g.user.id).all()
+    portfolio_ids = [c.id for c in user_portfolios]
+
+    companies = Company.query.filter(Company.portfolio_id.in_(portfolio_ids)).all()
+    # companies = Company.query.all()
     return render_template('portfolio.html', companies=companies, form=form)
     # return render_template('company.html', companies=companies, form=form)
