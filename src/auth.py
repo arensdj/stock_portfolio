@@ -61,10 +61,7 @@ def register():
 
     return render_template('auth/register.html', form=form)
 
-#   return render_template( ‘/auth/register.html’, form=form)  
-
 #   return ‘I am register’
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -102,19 +99,5 @@ def logout():
     """
     """
     session.clear()
-    flash('Thanks for being awesome!')
+    flash('Thanks for using this app!')
     return redirect(url_for('.login'))
-
-# def login_required(view_function):   # the 'view_function' comes from the routes.py
-
-#     @functools.wrap(view)
-#     def wrapped_view(**kwargs):
-#         if g.user is None:   # there is not a user, then abort message and redirect
-#             abort(404)
-#             # retrn redirect(url_for('.login'))
-
-#         return view(**kwargs)
-
-#     return wrapped_view
-
-
