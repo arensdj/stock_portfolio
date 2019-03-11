@@ -32,7 +32,6 @@ def company_search():
         try:
             symbol = form.data['symbol']        
             url = 'https://api.iextrading.com/1.0/stock/{}/company'.format(symbol)
-            # import pdb; pdb.set_trace()
             response = requests.get(url)
             data = json.loads(response.text)    
             session['context'] = data
@@ -52,11 +51,11 @@ def preview_company():
     """
     form_context = {
         'name': session['context']['companyName'],
-        'symbol' : session['context']['symbol']
+        'symbol' : session['context']['symbol'],
+        # 'portfolios' : session['context']['portfolios'],
     }
     form = CompanyAddForm(**form_context)
 
-    # import pdb; pdb.set_trace()
     if form.validate_on_submit():
         try:
             company = Company(name=form.data['name'], 
@@ -71,9 +70,6 @@ def preview_company():
         except DBAPIError as e:
             flash('Something went wrong with your search.')
             return redirect(url_for('.preview_company'))
-        # except (DBAPIError, IntegrityError, JSONDecodeError):
-        #     flash('Something went wrong with your search.')
-        #     return render_template(url_for('.preview_company'))
 
         return redirect(url_for('.portfolio'))
 
@@ -89,6 +85,10 @@ def preview_company():
 def portfolio():
     """
     """
+    # form_context = {
+    #     'name': session['context']['name'],
+    #     # 'symbol' : session['context']['symbol']
+    # }
     form = PortfolioCreateForm()
 
     if form.validate_on_submit():
