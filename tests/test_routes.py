@@ -40,6 +40,17 @@ def test_search_route_post_status_again(session):
     rv = app.test_client().post('/search', data={'symbol': 'GE'}, follow_redirects=True)
     assert rv.status_code == 200
 
+
+def test_home_route_title(self, client):
+    res = client.
+
+
+
+def test_unknown_route_status(self, client):
+    res = client.get('/does_not_exist')
+    assert res.status_code == 404
+    assert b'<h1>404 - Page Not Found</h1' in res.data
+
     
 
     
