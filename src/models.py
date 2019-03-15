@@ -28,14 +28,14 @@ class Portfolio(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.ForeignKey('users.id'), nullable=False)
-    name = db.Column(db.String(256), index=True)
+    name = db.Column(db.String(256), index=True, unique=True)
 
     companies = db.relationship('Company', backref='portfolio', lazy=True)
 
     dated_created = db.Column(db.DateTime, default=dt.now())
 
     def __repr__(self):
-        return '<Portfolio{}>'.format(self.name)
+        return '<Portfolio {}>'.format(self.name)
 
 class User(db.Model):
     """

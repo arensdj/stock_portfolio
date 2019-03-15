@@ -38,9 +38,9 @@ class TestPortfolioModel:
 class TestPortfolioCompanyRelationship:
     """
     """
-    def test_city_has_portfolio(self):
+    def test_company_has_portfolio(self):
         tech = Portfolio(name='tech')
-        arbor = City(name='Arbor Realty Trust', symbol='ABR', portfolio='low risk')
+        arbor = Company(name='Arbor Realty Trust', symbol='ABR', portfolio='low risk')
 
         assert seattle.portfolio.name == 'tech'
 
