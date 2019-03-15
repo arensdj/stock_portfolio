@@ -50,7 +50,7 @@ def register():
             error = f'( email ) has already been registered.'
         
         if error is None:
-            user = User(email=email, password=password)
+            user = User(email=email, raw_pass=password)
             db.session.add(user)
             db.session.commit()
 

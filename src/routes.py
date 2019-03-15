@@ -14,7 +14,7 @@ def get_portfolios():
     """
     """
     # return Portfolio.query.all()
-    # return Portfolio.query.filter_by(user_id=g.user.id).all()
+    return Portfolio.query.filter_by(user_id=g.user.id).all()
     return []
 
 
