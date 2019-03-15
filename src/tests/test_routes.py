@@ -19,8 +19,8 @@ def test_search_route():
     """
     rv = app.test_client().get('/search')
     assert rv.status_code == 200
-    # assert b'<title>Flask Demo</title>' in rv.data
-    assert b'<h2>Search for companies</h2>' in rv.data
+    assert b'<title>Flask Demo</title>' in rv.data
+    # assert b'<h2>Search for companies</h2>' in rv.data
 
 def test_portfolio_route_get_status(session):
     """

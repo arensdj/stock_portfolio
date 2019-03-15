@@ -51,7 +51,25 @@ class TestPortfolioCompanyRelationship:
         assert tech.companies[0].name == 'ADT Inc.'
         # assert rainy.cities[1].name == 'Glasgow'
 
+class TestUserModel:
+    """
+    """
+    def test_user_create(self, user):
+        """
+        """
+        assert user.id > 0
 
+    def test_user_email(self, user):
+        """
+        """
+        assert user.email == 'default@domain.com'
+
+    def test_user_check_password(self, user):
+        """
+        """
+        from src.models import User
+        assert User.check_password_hash(user, 'password')
+        
 
 # def test_create_company(session):
 #     company = Company(name='Agco Corp', symbol='agco')
