@@ -1,3 +1,5 @@
+import pytest
+
 class TestAuthentication:
     """
     """
@@ -48,7 +50,6 @@ class TestAuthentication:
         )
         assert res.status_code == 200
         assert b'Login:' in res.data
-        # assert check_title('Weather', res)
 
     def test_register_invalid_inputs(self, client):
         """
@@ -81,15 +82,20 @@ class TestAuthentication:
         )
         assert res.status_code == 200
 
+    @pytest.mark.skip()
     def test_login_page_redirect_to_company_detail(self, client, user, company):
         """
         """
         res = client.post(
+            # '/company',
             '/login',
             data={'email': user.email, 'password': 'password'},
 
             follow_redirects=True,
         )
+
+        assert b'Login' in res.data
+
         expected = f'{company.name}'
         assert expected.encode() in res.data
 
