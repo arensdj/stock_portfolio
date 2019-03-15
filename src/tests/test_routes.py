@@ -86,7 +86,8 @@ class TestAuthentication:
         """
         res = client.post(
             '/login',
-            data={'email': user.email, 'password': '12345'},
+            data={'email': user.email, 'password': 'password'},
+
             follow_redirects=True,
         )
         expected = f'{company.name}'

@@ -72,7 +72,7 @@ class TestUserModel:
         """
         """
         from src.models import User
-        assert User.check_password_hash(user, 'password')
+        assert User.check_password_hash(user, '12345')
         
 
 # def test_create_company(session):

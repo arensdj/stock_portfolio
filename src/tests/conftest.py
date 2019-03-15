@@ -87,7 +87,7 @@ def authenticated_client(client, user):
     """
     client.post(
         '/login',
-        data={'email': user.email, 'password': '12345'},
+        data={'email': user.email, 'password': 'password'},
         # data={'email': user.email, 'password': 'secret'},
 
         follow_redirects=True,
