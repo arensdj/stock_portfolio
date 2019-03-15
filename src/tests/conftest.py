@@ -95,7 +95,7 @@ def auth_client(client, user):
 def portfolio(session):
     """
     """
-    portfolio = Portfolio(name='Default', user_id=user.id)
+    portfolio = Portfolio(name='Default', user_id=users.id)
     session.add(portfolio)
     session.commit()
     return portfolio
@@ -105,8 +105,8 @@ def portfolio(session):
 def company(session, portfolio):
     """
     """
-    company = Company(name='ADT Inc.', symbol='ADT', portfolio_id=portfolio_id)
-    # company = Company(name='ADT Inc.', symbol='ADT', portfolio=portfolio)
+    # company = Company(name='ADT Inc.', symbol='ADT', portfolio_id=portfolio_id)
+    company = Company(name='ADT Inc.', symbol='ADT', portfolio=portfolio)
 
 
     session.add(company)

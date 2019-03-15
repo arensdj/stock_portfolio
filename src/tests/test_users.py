@@ -1,11 +1,11 @@
 from ..models import User  #relative path to models.py file
 
 
-Class TestUserModel:
+class TestUserModel:
     """
     """
     def test_user_create(self, user):
-        assert user.id > 0
+        assert users.id > 0
 
     def test_user_email(self, user):
         assert user.email == 'default@example.com'
