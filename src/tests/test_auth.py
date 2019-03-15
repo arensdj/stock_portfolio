@@ -3,12 +3,12 @@ import pytest
 
 def test_get_register_status(client):
    res = client.get('/register')
-   assert res.status_code = 201
+   assert res.status_code == 201
 
 def test_get_register_has_correct_title(client):
    res = client.get('/register')
    #  assert b'<title>Title:</title>' in res.data
-    assert b'<h2>Register:</h2>' in res.data
+   assert b'<h2>Register:</h2>' in res.data
 
 def test_has_correct_nav_when_not_logged_in(client):
     res = client.get('/')

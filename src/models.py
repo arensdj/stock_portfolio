@@ -48,7 +48,6 @@ class User(db.Model):
     password = db.Column(db.String(256), nullable=False)
 
     portfolios = db.relationship('Portfolio', backref='user', lazy=True)
-    # categories = db.relationship('Category', backref='user', lazy=True)
     # this establishes a category to have a 'user' connection with the categories table
     # this is a one to many.  user is one to many
 

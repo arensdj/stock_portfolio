@@ -1,4 +1,4 @@
-Class TestCategoryModel:
+class TestCategoryModel:
     """
     """
     def test_create_portfolio(self, portfolio):

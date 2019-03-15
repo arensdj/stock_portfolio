@@ -82,7 +82,7 @@ def login():
 
         if error is None:
             session.clear()
-            session['user_id'] = user.id
+            session['user_id'] = users.id
             return redirect(url_for('.portfolio'))  # not sure if correct url
 
         flash(error)
