@@ -1,7 +1,4 @@
-
-
 import pytest
-
 
 
 def test_get_register_status(client):
@@ -10,7 +7,8 @@ def test_get_register_status(client):
 
 def test_get_register_has_correct_title(client):
    res = client.get('/register')
-    assert b'<title>Title:</title>' in res.data
+   #  assert b'<title>Title:</title>' in res.data
+    assert b'<h2>Register:</h2>' in res.data
 
 def test_has_correct_nav_when_not_logged_in(client):
     res = client.get('/')
@@ -52,7 +50,6 @@ def test_post_successful_login_page_status(authenticated_client):
     res = authenticated_client.get('/login')
     assert res.status_code == 200
 
-
 def test_post_successful_login_page_title(authenticated_client):
     res = authenticated_client.get('/login')
     assert b'<title>Login</title>' in res.data    
@@ -62,5 +59,11 @@ def test_logout(authenticated_client):
     assert res.status_code == 200
     assert b'<title>Login</title>' in res.data
     
+def test_not_logged_in_protected_route(client):
+    res = client.get('/portfolio')   # not sure if this correct route
+    assert res.status_code == 404
+
+# tests for being logged in
+
 
 

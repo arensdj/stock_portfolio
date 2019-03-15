@@ -85,10 +85,6 @@ def preview_company():
 def portfolio():
     """
     """
-    # form_context = {
-    #     'name': session['context']['name'],
-    #     # 'symbol' : session['context']['symbol']
-    # }
     form = PortfolioCreateForm()
 
     if form.validate_on_submit():
@@ -100,8 +96,6 @@ def portfolio():
             flash('Something went wrong with Portfolio Form.')
             return render_template('portfolio.html', form=form)
 
-        # return redirect(url_for('.portfolio'))
-        # return redirect(url_for('search.html'))
         return redirect(url_for('.company_search'))
 
     user_portfolios = Portfolio.query.filter(Portfolio.user_id == g.user.id).all()
