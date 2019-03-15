@@ -1,55 +1,143 @@
-from src import app
-from flask import session
+class TestAuthentication:
+    """
+    """
+    def test_registration_page_status(self, client):
+        """
+        """
+        res = client.get('/register')
+        assert res.status_code == 200
+
+    def test_registration_body(self, client):
+        """
+        """
+        res = client.get('/register')
+        assert b'Register' in res.data
+
+    def test_registration_redirect_status(self, client):
+        """
+        """
+        res = client.post(
+            '/register',
+            data={'email': 'test@example.com', 'password': 'secret'},
+            follow_redirects=True,
+        )
+        assert res.status_code == 200
+
+    def test_registration_redirect_to_login(self, client):
+        """
+        """
+        res = client.post(
+            '/register',
+            data={'email': 'test@example.com', 'password': 'secret'},
+            follow_redirects=True,
+        )
+        assert b'Login' in res.data
+
+    def test_registered_user_can_login(self, client):
+        """
+        """
+        client.post(
+            '/register',
+            data={'email': 'test@example.com', 'password': 'secret'},
+            follow_redirects=True,
+        )
+        res = client.post(
+            '/login',
+            data={'email': 'test@example.com', 'password': 'secret'},
+            follow_redirects=True,
+        )
+        assert res.status_code == 200
+        assert b'Login:' in res.data
+        # assert check_title('Weather', res)
+
+    def test_register_invalid_inputs(self, client):
+        """
+        """
+        res = client.post(
+            '/register',
+            follow_redirects=True,
+        )
+        assert b'Register' in res.data
+
+    def test_login_page_status(self, client):
+        """
+        """
+        res = client.get('/login')
+        assert res.status_code == 200
+
+    def test_login_page_res_body(self, client):
+        """
+        """
+        res = client.get('/login')
+        assert b'Login' in res.data
+
+    def test_login_page_redirect_status(self, client, user):
+        """
+        """
+        res = client.post(
+            '/login',
+            data={'email': user.email, 'password': 'secret'},
+            follow_redirects=True,
+        )
+        assert res.status_code == 200
+
+    def test_login_page_redirect_to_company_detail(self, client, user, company):
+        """
+        """
+        res = client.post(
+            '/login',
+            data={'email': user.email, 'password': '12345'},
+            follow_redirects=True,
+        )
+        expected = f'{company.name}'
+        assert expected.encode() in res.data
+
+    def test_login_invalid_inputs(self, client):
+        """
+        """
+        res = client.post(
+            '/login',
+            follow_redirects=True,
+        )
+        assert b'Login' in res.data
+
+    def test_logout_redirect_status(self, authenticated_client):
+        """
+        """
+        res = authenticated_client.get('/logout', follow_redirects=True)
+        assert res.status_code == 200
+
+    def test_logout_unauthenticated(self, client):
+        """
+        """
+        res = client.get('/logout')
+        assert res.status_code == 404
 
 
-def test_home_route():
+class TestAuthenticatedRoutes:
     """
-    Tests '/' route status code
     """
-    rv = app.test_client().get('/')
-    assert rv.status_code == 200
+    def test_search_route_status(self, authenticated_client):
+        """
+        """
+        res = authenticated_client.get('/search')
+        assert res.status_code == 200
 
-def test_home_route_title():
-    rv = app.test_client().get('/')
-    assert b'<h1>Welcome to the site</h1>' in rv.data
+    def test_search_route_status_unauthenticated(self, client):
+        """
+        """
+        res = client.get('/search')
+        assert res.status_code == 404
 
-def test_search_route():
-    """
-    Tests '/search' route status code
-    """
-    rv = app.test_client().get('/search')
-    assert rv.status_code == 200
-    assert b'<title>Flask Demo</title>' in rv.data
-    # assert b'<h2>Search for companies</h2>' in rv.data
+    def test_search_route_no_categories(self, authenticated_client):
+        """
+        """
+        res = authenticated_client.get('/search')
+        assert b'Please create' in res.data
 
-def test_portfolio_route_get_status(session):
-    """
-    Tests '/' route status code
-    """
-    rv = app.test_client().get('/portfolio')
-    assert rv.status_code == 200
-    # assert b'<title>Flask Demo</title>' in rv.data
-
-def test_portfolio_route_get_welcome_message():
-    rv = app.test_client().get('/portfolio')
-    assert b'<h2>Welcome to the Portfolio</h2>' in rv.data
-
-def test_search_route_post_status(session):
-    """
-    Tests that /search post route gives correct status
-    """
-    rv = app.test_client().post('/search', data={'symbol': 'GE'})
-    assert rv.status_code == 200
-    # assert rv.status_code == 302
-
-def test_search_route_post_status_again(session):
-    """
-    Tests that /search post route gives correct status
-    """
-    rv = app.test_client().post('/search', data={'symbol': 'GE'}, follow_redirects=True)
-    assert rv.status_code == 200
-
-def test_unknown_route_status(self, client):
-    res = client.get('/does_not_exist')
-    assert res.status_code == 404
-    assert b'<h1>404 - Page Not Found</h1' in res.data
+    def test_search_route_with_categories(self, authenticated_client, portfolio):
+        """
+        """
+        res = authenticated_client.get('/search')
+        assert b'action="/search"' in res.data
+        assert b'symbol' in res.data

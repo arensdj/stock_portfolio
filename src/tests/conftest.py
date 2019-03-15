@@ -82,20 +82,31 @@ def user(session):
 
 
 @pytest.fixture()
-def auth_client(client, user):
+def authenticated_client(client, user):
+    """
+    """
     client.post(
         '/login',
         data={'email': user.email, 'password': '12345'},
-        follow_redirects=True
+        # data={'email': user.email, 'password': 'secret'},
+
+        follow_redirects=True,
     )
     return client
 
 
+# @pytest.fixture()
+# def auth_client(client, user):
+#     client.post(
+#         '/login',
+#         data={'email': user.email, 'password': '12345'},
+#         follow_redirects=True
+#     )
+#     return client
+
 @pytest.fixture()
-def portfolio(session):
-    """
-    """
-    portfolio = Portfolio(name='Default', user_id=users.id)
+def portfolio(session,user):
+    portfolio= Portfolio(name= 'Default', user_id=user.id)
     session.add(portfolio)
     session.commit()
     return portfolio
@@ -106,10 +117,11 @@ def company(session, portfolio):
     """
     """
     # company = Company(name='ADT Inc.', symbol='ADT', portfolio_id=portfolio_id)
-    company = Company(name='ADT Inc.', symbol='ADT', portfolio=portfolio)
 
+    company = Company(name='ADT Inc.', symbol='ADT', portfolio_id=portfolio.id)
 
     session.add(company)
 
     session.commit()
     return company
+

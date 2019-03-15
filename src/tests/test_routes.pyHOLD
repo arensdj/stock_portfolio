@@ -1,0 +1,87 @@
+from src import app
+from flask import session
+from ..models import User
+
+def test_home_route():
+    """
+    Tests '/' route status code
+    """
+    rv = app.test_client().get('/')
+    assert rv.status_code == 200
+    assert b'<h1>Welcome to the site</h1>' in rv.data
+
+def test_search_route_get(session, auth_client):
+    """
+    Tests '/search' route status code
+    """
+    
+    assert len(User.query.all()) == 1
+
+    rv = auth_client.get('/search')
+    assert rv.status_code == 200
+    assert b'<title>Search</title>' in rv.data
+
+# def test_search_route(session):
+#     """
+#     Tests '/search' route status code
+#     """
+#     rv = app.test_client().get('/search')
+#     assert rv.status_code == 200
+#     assert b'<title>Flask Demo</title>' in rv.data
+    # assert b'<h2>Search for companies</h2>' in rv.data
+
+def test_portfolio_route_get_status(session, auth_client):
+    """
+    Tests '/' route status code
+    """
+    rv = auth_client.get('/portfolio')
+    assert rv.status_code == 200
+    assert b'<h1>Portfolio</h1>' in rv.data
+
+# def test_portfolio_route_get_status(session):
+#     """
+#     Tests '/' route status code
+#     """
+#     rv = app.test_client().get('/portfolio')
+#     assert rv.status_code == 200
+    # assert b'<title>Flask Demo</title>' in rv.data
+
+def test_portfolio_route_get_welcome_message():
+    rv = app.test_client().get('/portfolio')
+    assert b'<h2>Welcome to the Portfolio</h2>' in rv.data
+
+# def test_search_route_post_status(session):
+def test_search_route_post_status():
+    """
+    Tests that /search post route gives correct status
+    """
+    rv = app.test_client().post('/search', data={'symbol': 'GE'})
+    # assert rv.status_code == 200
+    assert rv.status_code == 302
+
+def test_search_route_post_status_again(session):
+    """
+    Tests that /search post route gives correct status
+    """
+    rv = app.test_client().post('/search', data={'symbol': 'GE'}, follow_redirects=True)
+    assert rv.status_code == 200
+
+
+def test_registration_get(client):
+    res = client.get('/register')
+    assert res.status_code == 200
+    assert b'<h1>Register</h1>' in res.data
+
+
+def test_registration_redirect(client):
+    res = client.post(
+        '/register',
+        data={'email': 'py@test.com', 'password': '12345'},
+        follow_redirects=True
+    )
+    assert b'<h1>Login</h1>' in res.data
+
+# def test_unknown_route_status(self, client):
+#     res = client.get('/does_not_exist')
+#     assert res.status_code == 404
+#     assert b'<h1>404 - Page Not Found</h1' in res.data

@@ -56,9 +56,9 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.email)
 
-    def __init__(self, email, password): # password is raw password
+    def __init__(self, email, raw_pass): # password is raw password
         self.email = email
-        self.password = sha256_crypt.hash(password)
+        self.password = sha256_crypt.hash(raw_pass)
 
     @classmethod
     def check_password_hash(cls, user, password):
