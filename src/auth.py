@@ -80,12 +80,12 @@ def login():
         if user is None or not User.check_password_hash(user, password):
             error = 'Invalid username or password.'
 
-        print('************************', error)
+        # print('************************', error)
 
         if error is None:
             session.clear()
             session['user_id'] = user.id
-            print('Session user_id', session['user_id'])
+            # print('Session user_id', session['user_id'])
             return redirect(url_for('.portfolio'))  # not sure if correct url
 
         flash(error)
